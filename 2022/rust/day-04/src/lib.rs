@@ -34,9 +34,8 @@ impl Area {
     }
 
     fn overlap(&self, other: &Self) -> bool {
-        self.either_contains(other)
-            || !(self.right < other.right && self.left < other.left && self.right < other.left
-                || other.right < self.right && other.left < self.left && other.right < self.left)
+        self.left <= other.right && self.right >= other.left
+        // !(self.left > other.right || self.right < other.left)
     }
 
     fn either_contains(&self, other: &Self) -> bool {
