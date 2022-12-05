@@ -1,0 +1,4 @@
+* Advent of Code 2020
+
+This year's code will be heavily influenced by fasterthanli.me's excellent series of articles.
+You can read them here: https://fasterthanli.me/series/advent-of-code-2020
