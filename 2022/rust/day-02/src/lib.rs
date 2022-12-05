@@ -36,8 +36,8 @@ impl PartialEq for Hand {
 
 impl Ord for Hand {
     fn cmp(&self, other: &Self) -> Ordering {
-        use Ordering::*;
         use Hand::*;
+        use Ordering::*;
 
         match (*self, *other) {
             (Rock, Scissors) => return Greater,
@@ -56,6 +56,14 @@ impl PartialOrd for Hand {
 }
 
 impl Game {
+    fn from(hands: &str) -> Self {
+        let h = hands
+            .split_whitespace()
+            .map(Hand::from)
+            .collect::<Vec<Hand>>();
+        Game(*h.first().unwrap(), *h.last().unwrap())
+    }
+
     fn resolve(&self) -> u16 {
         use Ordering::*;
 
@@ -78,11 +86,11 @@ impl Game {
                     Paper => Game(Paper, Rock).resolve(),
                     Scissors => Game(Scissors, Paper).resolve(),
                 }
-            },
+            }
             Paper => {
                 // draw
                 Game(self.0, self.0).resolve()
-            },
+            }
             Scissors => {
                 // win
                 match self.0 {
@@ -104,13 +112,9 @@ pub fn part2(source: &str) -> String {
 }
 
 fn parse(source: &str, resolver: impl Fn(Game) -> u32) -> String {
-    source.lines()
-        .map(|l| {
-            let hands = l.split_whitespace()
-                .map(Hand::from)
-                .collect::<Vec<Hand>>();
-            Game(*hands.first().unwrap(), *hands.last().unwrap())
-        })
+    source
+        .lines()
+        .map(Game::from)
         .map(resolver)
         .sum::<u32>()
         .to_string()
@@ -119,8 +123,8 @@ fn parse(source: &str, resolver: impl Fn(Game) -> u32) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use Hand::*;
     use std::fs;
+    use Hand::*;
 
     #[test]
     fn test_hand_creation() {
