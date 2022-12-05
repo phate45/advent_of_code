@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use std::collections::HashSet;
 
+
 pub fn part1(source: &str) -> String {
     source
         .lines()
@@ -13,27 +14,22 @@ pub fn part1(source: &str) -> String {
 pub fn part2(source: &str) -> String {
     source
         .lines()
+        .map(|line| {
+            line.chars()
+                .map(|c| c.as_priority())
+                .collect::<im::HashSet<u32>>()
+        })
         .chunks(3)
         .into_iter()
-        .map(|v| {
-            v.into_iter()
-                .map(|s| {
-                    let c = s.chars().collect::<Vec<char>>();
-                    uniq!(c)
-                })
-                .collect::<Vec<HashSet<char>>>()
+        .map(|chunk| {
+            chunk
+                .reduce(|a, b| a.intersection(b))
+                .expect("There will always be data.")  // returns a HashSet with one item
+                .iter()
+                .next()
+                .expect("There will always be one item.")   // which we extract here, but it is a reference to the original data
+                .to_owned()  // thus we dereference
         })
-        .map(|mut v| {
-            // could potentially be optimized since we know there's always going to be 3 sets in advance,
-            //   together with the above map() call
-            let mut res = v.pop().unwrap();
-
-            // intersection of multiple sets is a bit tricky, and the method using & didn't pan out
-            res.retain(|i| v.iter().all(|set| set.contains(i)));
-
-            res
-        })
-        .map(|set| set.iter().map(|c| c.as_priority()).sum::<u32>()) // sum the 'retained' set
         .sum::<u32>() // sum all the chunks
         .to_string()
 }
