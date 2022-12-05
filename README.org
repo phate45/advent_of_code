@@ -1,0 +1,33 @@
+#+startup: showall
+
+* Advent of Code
+
+This is my repository for AoC solutions.
+
+I started solving AoC in 2022, but because of a few friends, and some of the sources i follow (youtube channels, blogs), i will be trying out the past years as well.
+
+** Languages used
+*** Rust
+Rust is my primary hobby language as of now. I will also note down interesting/useful libraries as i come across them during the various problems.
+*** Python
+Python is the language that got me started on the path of software engineering, and i might come back to it to compare with my Rust solutions
+** Libraries
+*** Rust
+**** itertools
+https://docs.rs/crate/itertools/
+#+begin_quote
+Extra iterator adaptors, functions and macros.
+#+end_quote
+Invaluable crate when it comes to any sort of functional-style programming of iterating over input to produce output (map/reduce anyone?).
+**** im
+https://docs.rs/im/
+#+begin_quote
+Blazing fast immutable collection datatypes for Rust.
+#+end_quote
+Interesting little crate with plenty of potential for data processing. Main focus is immutable structures.
+**** nom
+https://docs.rs/crate/nom/
+#+begin_quote
+nom is a parser combinators library written in Rust. Its goal is to provide tools to build safe parsers without compromising the speed or memory consumption. To that end, it uses extensively Rust's strong typing and memory safety to produce fast and correct parsers, and provides functions, macros and traits to abstract most of the error prone plumbing.
+#+end_quote
+Parser combinator library, used for exercises with more complex input structure.
