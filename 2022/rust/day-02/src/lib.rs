@@ -57,11 +57,13 @@ impl PartialOrd for Hand {
 
 impl Game {
     fn from(hands: &str) -> Self {
-        let h = hands
-            .split_whitespace()
-            .map(Hand::from)
-            .collect::<Vec<Hand>>();
-        Game(*h.first().unwrap(), *h.last().unwrap())
+        let mut h = hands.split_whitespace().map(Hand::from);
+
+        if let (Some(a), Some(b)) = (h.next(), h.next()) {
+            return Game(a, b);
+        }
+
+        unimplemented!("Unimaginable occurence!")
     }
 
     fn resolve(&self) -> u16 {
