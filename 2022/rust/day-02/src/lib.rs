@@ -96,19 +96,14 @@ impl Game {
 }
 
 pub fn part1(source: &str) -> String {
-    source.lines()
-        .map(|l| {
-            let hands = l.split_whitespace()
-                .map(Hand::from)
-                .collect::<Vec<Hand>>();
-            Game(*hands.first().unwrap(), *hands.last().unwrap())
-        })
-        .map(|g| g.resolve() as u32)
-        .sum::<u32>()
-        .to_string()
+    parse(source, |g: Game| g.resolve().into())
 }
 
 pub fn part2(source: &str) -> String {
+    parse(source, |g: Game| g.resolve_2().into())
+}
+
+fn parse(source: &str, resolver: impl Fn(Game) -> u32) -> String {
     source.lines()
         .map(|l| {
             let hands = l.split_whitespace()
@@ -116,7 +111,7 @@ pub fn part2(source: &str) -> String {
                 .collect::<Vec<Hand>>();
             Game(*hands.first().unwrap(), *hands.last().unwrap())
         })
-        .map(|g| g.resolve_2() as u32)
+        .map(resolver)
         .sum::<u32>()
         .to_string()
 }
