@@ -19,15 +19,22 @@ https://docs.rs/crate/itertools/
 Extra iterator adaptors, functions and macros.
 #+end_quote
 Invaluable crate when it comes to any sort of functional-style programming of iterating over input to produce output (map/reduce anyone?).
-**** im
-https://docs.rs/im/
+**** color_eyre
+https://docs.rs/color-eyre/
 #+begin_quote
-Blazing fast immutable collection datatypes for Rust.
+An error report handler for panics and the eyre crate for colorful, consistent, and well formatted error reports for all kinds of errors.
 #+end_quote
-Interesting little crate with plenty of potential for data processing. Main focus is immutable structures.
+Very good error handler crate. Colorful output is always nice to see, and it's an improvement over rust's standard error reporting.
+More information about which ~unwrap()~ call failed is handy, especially with these 'script' AoC solutions.
 **** nom
 https://docs.rs/crate/nom/
 #+begin_quote
 nom is a parser combinators library written in Rust. Its goal is to provide tools to build safe parsers without compromising the speed or memory consumption. To that end, it uses extensively Rust's strong typing and memory safety to produce fast and correct parsers, and provides functions, macros and traits to abstract most of the error prone plumbing.
 #+end_quote
 Parser combinator library, used for exercises with more complex input structure.
+**** im
+https://docs.rs/im/
+#+begin_quote
+Blazing fast immutable collection datatypes for Rust.
+#+end_quote
+Interesting little crate with plenty of potential for data processing. Main focus is immutable structures.
