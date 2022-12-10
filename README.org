@@ -32,6 +32,7 @@ https://docs.rs/crate/nom/
 nom is a parser combinators library written in Rust. Its goal is to provide tools to build safe parsers without compromising the speed or memory consumption. To that end, it uses extensively Rust's strong typing and memory safety to produce fast and correct parsers, and provides functions, macros and traits to abstract most of the error prone plumbing.
 #+end_quote
 Parser combinator library, used for exercises with more complex input structure.
+Actually, i'm starting to use it anywhere there's more than just a simple grid of numbers. This crate is really handy!
 **** im
 https://docs.rs/im/
 #+begin_quote
