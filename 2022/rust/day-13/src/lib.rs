@@ -31,24 +31,18 @@ pub fn part2(source: &str) -> Result<String> {
         .expect("The input must be valid!")
         .1
         .into_iter()
-        .chain(vec![Pair {
-            left: List(vec![List(vec![Number(2)])]),
-            right: List(vec![List(vec![Number(6)])]),
-        }])
-        .flat_map(|p| vec![p.left, p.right])
-        .sorted_by(|left, right| match (&left, &right) {
-            (List(left), List(right)) => left.cmp(right),
-            (Number(left), Number(right)) => left.cmp(right),
-            (List(left), Number(right)) => left.cmp(&vec![Number(*right)]),
-            (Number(left), List(right)) => vec![Number(*left)].cmp(right),
-        })
-        .enumerate()
-        .map(|(i, p)| (i + 1, p))
-        .filter(|(_, packet)| {
+        .flat_map(|p| [p.left, p.right])
+        .chain([
+            List(vec![List(vec![Number(2)])]),
+            List(vec![List(vec![Number(6)])]),
+        ])
+        .sorted()
+        .zip(1..)
+        .filter(|(packet, _)| {
             packet == &List(vec![List(vec![Number(2)])])
                 || packet == &List(vec![List(vec![Number(6)])])
         })
-        .map(|(i, _)| i)
+        .map(|(_, i)| i)
         .product::<usize>()
         .to_string())
 }
