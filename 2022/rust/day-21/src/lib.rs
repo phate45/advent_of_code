@@ -22,6 +22,10 @@ pub fn part2(source: &str) -> Result<String> {
 
     let target = res.2; // determined by manual testing
 
+    // the bisection works well, in both implementations
+    // the problem lies in the test input when compared with the real input
+    // in the test input, the output of the 'solve_inner' method is related to its input
+    // in the real input, the solution is **inversely** proportional to the input
     let res = bisection(
         |n| {
             nums.insert("humn".to_string(), n);
@@ -32,7 +36,6 @@ pub fn part2(source: &str) -> Result<String> {
         4_000_000_000_000, // the high bound was determined by some manual testing
     );
 
-    // let res = "";
     Ok(res.to_string())
 }
 
@@ -66,23 +69,51 @@ fn solve_inner(nums: BTreeMap<String, i64>, ops: VecDeque<MonkeyInfo>) -> (Monke
 }
 
 fn bisection(mut f: impl FnMut(i64) -> i64, r: i64, low: i64, high: i64) -> i64 {
-    // this whole function has some issues
-    // it either works for high or low numbers (depending on the else if direction)
-    // needs some fiddling
+    println!(
+        "Trying to find '{}' with bounds {}-{}",
+        r.to_formatted_string(&Locale::en),
+        low.to_formatted_string(&Locale::en),
+        &high.to_formatted_string(&Locale::en)
+    );
+    if low == high {
+        return -1;
+    }
+
+    let mid = (high + low) / 2;
+    let guess = f(mid);
+    let g = &guess.to_formatted_string(&Locale::en);
+    let m = &mid.to_formatted_string(&Locale::en);
+    println!("f({}) = {}", m, g);
+
+    if guess > r {
+        return bisection(f, r, low, mid);
+    } else if guess < r {
+        return bisection(f, r, mid, high);
+    }
+
+    mid - 1
+}
+
+fn bisection_imp(mut f: impl FnMut(i64) -> i64, r: i64, low: i64, high: i64) -> i64 {
     let mut low = low;
     let mut high = high;
-    println!("r = {}", r.to_formatted_string(&Locale::en));
+    println!(
+        "Trying to find '{}' with bounds {}-{}",
+        r.to_formatted_string(&Locale::en),
+        low.to_formatted_string(&Locale::en),
+        &high.to_formatted_string(&Locale::en)
+    );
 
-    while (high - low).abs() > 3 {
+    while (high - low).abs() > 1 {
         let mid = (high + low) / 2;
         let guess = f(mid);
 
         let g = &guess.to_formatted_string(&Locale::en);
         let m = &mid.to_formatted_string(&Locale::en);
-        println!("g = {}\nm = {}", g, m);
+        println!("f({}) = {}", m, g);
         if guess == r {
             return mid;
-        } else if guess > r {
+        } else if guess < r {
             low = mid;
         } else {
             high = mid;
