@@ -1,8 +1,7 @@
-use std::collections::{BTreeMap, VecDeque};
+use std::{collections::{BTreeMap, VecDeque}, cmp::Ordering::{Greater, Less, Equal}};
 
 use color_eyre::Result;
 use nom::{bytes::complete::tag, character::complete::alpha1, sequence::terminated, IResult};
-use num_format::{Locale, ToFormattedString};
 
 pub fn part1(source: &str) -> Result<String> {
     let res = solve(source, 2326);
@@ -26,7 +25,7 @@ pub fn part2(source: &str) -> Result<String> {
     // the problem lies in the test input when compared with the real input
     // in the test input, the output of the 'solve_inner' method is related to its input
     // in the real input, the solution is **inversely** proportional to the input
-    let res = bisection(
+    let res = bisection_imp(
         |n| {
             nums.insert("humn".to_string(), n);
             solve_inner(nums.clone(), ops.clone()).1
@@ -37,6 +36,38 @@ pub fn part2(source: &str) -> Result<String> {
     );
 
     Ok(res.to_string())
+}
+
+pub fn part2_bench(imp: bool) {
+    let source = include_str!("../real_input.txt");
+
+    let monkeys = parse(source);
+    let (mut nums, ops) = transform(monkeys);
+    nums.insert("humn".to_string(), 2_326);
+    let res = solve_inner(nums.clone(), ops.clone());
+    let target = res.2;
+
+    if imp {
+        bisection_imp(
+            |n| {
+                nums.insert("humn".to_string(), n);
+                solve_inner(nums.clone(), ops.clone()).1
+            },
+            target,
+            0,
+            4_000_000_000_000,
+        );
+    } else {
+        bisection(
+            |n| {
+                nums.insert("humn".to_string(), n);
+                solve_inner(nums.clone(), ops.clone()).1
+            },
+            target,
+            0,
+            4_000_000_000_000,
+        );
+    }
 }
 
 fn solve(source: &str, humn: i64) -> (MonkeyInfo, i64, i64) {
@@ -69,54 +100,52 @@ fn solve_inner(nums: BTreeMap<String, i64>, ops: VecDeque<MonkeyInfo>) -> (Monke
 }
 
 fn bisection(mut f: impl FnMut(i64) -> i64, r: i64, low: i64, high: i64) -> i64 {
-    println!(
-        "Trying to find '{}' with bounds {}-{}",
-        r.to_formatted_string(&Locale::en),
-        low.to_formatted_string(&Locale::en),
-        &high.to_formatted_string(&Locale::en)
-    );
+    // use num_format::{Locale, ToFormattedString};
+    // println!(
+    //     "Trying to find '{}' with bounds {}-{}",
+    //     r.to_formatted_string(&Locale::en),
+    //     low.to_formatted_string(&Locale::en),
+    //     &high.to_formatted_string(&Locale::en)
+    // );
     if low == high {
         return -1;
     }
 
     let mid = (high + low) / 2;
     let guess = f(mid);
-    let g = &guess.to_formatted_string(&Locale::en);
-    let m = &mid.to_formatted_string(&Locale::en);
-    println!("f({}) = {}", m, g);
+    // let g = &guess.to_formatted_string(&Locale::en);
+    // let m = &mid.to_formatted_string(&Locale::en);
+    // println!("f({}) = {}", m, g);
 
-    if guess > r {
-        return bisection(f, r, low, mid);
-    } else if guess < r {
-        return bisection(f, r, mid, high);
+    match r.cmp(&guess) {
+        Greater => bisection(f, r, low, mid),
+        Less => bisection(f, r, mid, high),
+        Equal => mid - 1,
     }
-
-    mid - 1
 }
 
 fn bisection_imp(mut f: impl FnMut(i64) -> i64, r: i64, low: i64, high: i64) -> i64 {
+    // use num_format::{Locale, ToFormattedString};
+    // println!(
+    //     "Trying to find '{}' with bounds {}-{}",
+    //     r.to_formatted_string(&Locale::en),
+    //     low.to_formatted_string(&Locale::en),
+    //     &high.to_formatted_string(&Locale::en)
+    // );
     let mut low = low;
     let mut high = high;
-    println!(
-        "Trying to find '{}' with bounds {}-{}",
-        r.to_formatted_string(&Locale::en),
-        low.to_formatted_string(&Locale::en),
-        &high.to_formatted_string(&Locale::en)
-    );
 
     while (high - low).abs() > 1 {
         let mid = (high + low) / 2;
         let guess = f(mid);
+        // let g = &guess.to_formatted_string(&Locale::en);
+        // let m = &mid.to_formatted_string(&Locale::en);
+        // println!("f({}) = {}", m, g);
 
-        let g = &guess.to_formatted_string(&Locale::en);
-        let m = &mid.to_formatted_string(&Locale::en);
-        println!("f({}) = {}", m, g);
-        if guess == r {
-            return mid;
-        } else if guess < r {
-            low = mid;
-        } else {
-            high = mid;
+        match r.cmp(&guess) {
+            Greater => high = mid,
+            Less => low = mid,
+            Equal => return mid - 1,
         }
     }
 
@@ -190,8 +219,8 @@ impl Ord for Monkey {
 
         match (self, other) {
             (Number(a), Number(b)) => a.cmp(b),
-            (Number(_), Operation(_)) => std::cmp::Ordering::Greater,
-            (Operation(_), Number(_)) => std::cmp::Ordering::Less,
+            (Number(_), Operation(_)) => Greater,
+            (Operation(_), Number(_)) => Less,
             (Operation(a), Operation(b)) => a.cmp(b),
         }
     }
